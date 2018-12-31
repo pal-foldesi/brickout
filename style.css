@@ -1,0 +1,17 @@
+#myCanvas {
+    border:1px solid #000000;
+}
+
+#scoreContainer {
+    border:1px solid #000000;
+}
+
+#help {
+    border:1px solid #000000;
+}
+
+#container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
