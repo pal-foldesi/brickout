@@ -1,0 +1,28 @@
+{
+  "name": "brickout",
+  "version": "0.0.1",
+  "description": "A basic Breakout clone. Use the ball to destroy all of the bricks. ",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pal-foldesi/brickout.git"
+  },
+  "keywords": [
+    "game",
+    "canvas"
+  ],
+  "author": "pal-foldesi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pal-foldesi/brickout/issues"
+  },
+  "homepage": "https://github.com/pal-foldesi/brickout#readme",
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
