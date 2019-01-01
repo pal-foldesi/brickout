@@ -101,6 +101,9 @@ class Game {
     }
 
     detectCollisions() {
+
+        //Note: Rudimentary collision detection only, will need to be improved later.
+
         //Ball and top
         if (this.ball.y - BALL_RADIUS <= 0) {
             this.ball.dy *= -1;
@@ -109,6 +112,47 @@ class Game {
         //Ball and sides
         if (this.ball.x - BALL_RADIUS <= 0 || this.ball.x + BALL_RADIUS >= CANVAS.width) {
             this.ball.dx *= -1;
+        }
+
+        const bricksToRemove = [];
+
+        //Ball and bricks
+        for (let i = 0; i < this.bricks.length; i++) {
+            const brick = this.bricks[i];
+
+            //Ball and bottom of brick
+            if (this.ball.x + BALL_RADIUS >= brick.x && this.ball.x + BALL_RADIUS <= brick.x + BRICK_WIDTH &&
+                this.ball.y - BALL_RADIUS === brick.y + BRICK_HEIGHT) {
+                bricksToRemove.push(i);
+                this.ball.dy *= -1;
+            }
+
+            //Ball and top of brick
+            if (this.ball.x + BALL_RADIUS >= brick.x && this.ball.x + BALL_RADIUS <= brick.x + BRICK_WIDTH &&
+                this.ball.y + BALL_RADIUS === brick.y) {
+                bricksToRemove.push(i);
+                this.ball.dy *= -1;
+            }
+
+            //Ball and left of brick
+            if (this.ball.x + BALL_RADIUS === brick.x &&
+                this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                bricksToRemove.push(i);
+                this.ball.dx *= -1;
+            }
+
+            //Ball and right of brick
+            if (this.ball.x + BALL_RADIUS === brick.x + BRICK_WIDTH &&
+                this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                bricksToRemove.push(i);
+                this.ball.dx *= -1;
+            }
+        }
+
+        //Remove colliding bricks
+        for (let index of bricksToRemove) {
+            this.bricks[index].clear();
+            this.bricks.splice(index, 1);
         }
     }
 
