@@ -1,7 +1,8 @@
 import Ball from './ball.js';
 
-import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS } from './constants.js';
+import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT } from './constants.js';
 import Brick from './brick.js';
+import Paddle from './paddle.js';
 
 class Game {
     constructor() {
@@ -13,6 +14,7 @@ class Game {
         this.ball = new Ball();
         const self = this;
         CANVAS.addEventListener('click', () => self.start());
+        this.generatePaddle();
     }
 
     static setCanvasWidth() {
@@ -98,6 +100,10 @@ class Game {
                 this.bricks.push(new Brick(i, j));
             }
         }
+    }
+
+    generatePaddle() {
+        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH/2, CANVAS.height - PADDLE_HEIGHT);
     }
 
     detectCollisions() {
