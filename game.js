@@ -1,11 +1,14 @@
 import Ball from './ball.js';
 
 import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS } from './constants.js';
+import Brick from './brick.js';
 
 class Game {
     constructor() {
         Game.setCanvasWidth();
         Game.setCanvasHeight();
+        this.bricks = [];
+        this.generateBricks();
         Game.showGameStartText();
         this.ball = new Ball();
         const self = this;
@@ -54,6 +57,7 @@ class Game {
 
     start() {
         Game.hideGameStartText();
+        this.bricks.forEach(brick => brick.draw());
         this.ball.dx = -5;
         this.ball.dy = -5;
         const self = this;
@@ -86,6 +90,14 @@ class Game {
         CONTEXT.strokeText('game area to', CANVAS.width / 2, CANVAS.height / 2);
         CONTEXT.fillText('start the game!', CANVAS.width / 2, CANVAS.height / 2 + 140);
         CONTEXT.strokeText('start the game!', CANVAS.width / 2, CANVAS.height / 2 + 140);
+    }
+
+    generateBricks() {
+        for (let i = 0; i < CANVAS.width; i+= BRICK_WIDTH) {
+            for (let j = 0; j < CANVAS.height / 2; j+= BRICK_HEIGHT) {
+                this.bricks.push(new Brick(i, j));
+            }
+        }
     }
 
     detectCollisions() {
