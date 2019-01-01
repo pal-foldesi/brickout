@@ -166,6 +166,31 @@ class Game {
             this.bricks[index].clear();
             this.bricks.splice(index, 1);
         }
+
+        //Ball and paddle
+        //Ball and bottom of paddle
+        if (this.ball.x + BALL_RADIUS >= this.paddle.x && this.ball.x + BALL_RADIUS <= this.paddle.x + PADDLE_WIDTH &&
+            this.ball.y - BALL_RADIUS === this.paddle.y + PADDLE_HEIGHT) {
+            this.ball.dy *= -1;
+        }
+
+        //Ball and top of paddle
+        if (this.ball.x + BALL_RADIUS >= this.paddle.x && this.ball.x + BALL_RADIUS <= this.paddle.x + PADDLE_WIDTH &&
+            this.ball.y + BALL_RADIUS >= this.paddle.y) {
+            this.ball.dy *= -1;
+        }
+
+        //Ball and left of paddle
+        if (this.ball.x + BALL_RADIUS === this.paddle.x &&
+            this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+            this.ball.dx *= -1;
+        }
+
+        //Ball and right of paddle
+        if (this.ball.x + BALL_RADIUS === this.paddle.x + PADDLE_WIDTH &&
+            this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+            this.ball.dx *= -1;
+        }
     }
 
     detectGameOver() {
