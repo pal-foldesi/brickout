@@ -1,6 +1,6 @@
 import Ball from './ball.js';
 
-import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT } from './constants.js';
+import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH } from './constants.js';
 import Brick from './brick.js';
 import Paddle from './paddle.js';
 
@@ -13,6 +13,10 @@ class Game {
         Game.showGameStartText();
         this.ball = new Ball();
         const self = this;
+        this.mouseMoved = ((event) => {
+            this.handleMouseMove(event);
+        });
+        this.mouseMovedHandler = this.mouseMoved.bind(this);
         CANVAS.addEventListener('click', () => self.start());
         this.generatePaddle();
     }
@@ -59,10 +63,12 @@ class Game {
 
     start() {
         Game.hideGameStartText();
+        document.body.style.cursor = 'none'; 
         this.bricks.forEach(brick => brick.draw());
+        const self = this;
+        CANVAS.addEventListener('mousemove', this.mouseMovedHandler);
         this.ball.dx = -5;
         this.ball.dy = -5;
-        const self = this;
         window.requestAnimationFrame(() => self.tick());
     }
 
@@ -172,6 +178,8 @@ class Game {
     }
 
     end() {
+        document.body.style.cursor = 'default'; 
+        CANVAS.removeEventListener('mousemove', this.mouseMovedHandler);
         CONTEXT.fillStyle = 'khaki';
         CONTEXT.font = 'bold 144px serif';
         CONTEXT.lineWidth = 5;
@@ -181,6 +189,20 @@ class Game {
         CONTEXT.strokeText('Game', CANVAS.width / 2, CANVAS.height / 2 - 80);
         CONTEXT.fillText('over!', CANVAS.width / 2, CANVAS.height / 2 + 80);
         CONTEXT.strokeText('over!', CANVAS.width / 2, CANVAS.height / 2 + 80);
+    }
+
+    handleMouseMove(event) {
+        //console.log(`clientX: ${event.clientX}, screenX: ${event.screenX}, windowX: ${window.screenX}`);
+        this.paddle.clear();
+        const offset = window.screen.availWidth - CANVAS.width;
+        let moveTo = event.clientX - offset;
+        if (moveTo < 0) {
+            moveTo = 0;
+        } else if (moveTo > CANVAS.width - PADDLE_WIDTH) {
+            moveTo = CANVAS.width - PADDLE_WIDTH;
+        }
+        this.paddle.x = moveTo;
+        this.paddle.draw();
     }
 }
 

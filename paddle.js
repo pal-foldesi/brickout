@@ -23,7 +23,7 @@ class Paddle {
 
   clear() {
     CONTEXT.fillStyle = 'white';
-    CONTEXT.fillRect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
+    CONTEXT.fillRect(this.x - 1, this.y - 1, BRICK_WIDTH + 1, BRICK_HEIGHT + 1); //Width and length are offset to get rid of artifacts
   }
 }
 
