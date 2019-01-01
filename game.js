@@ -47,6 +47,11 @@ class Game {
 
     tick() {
         if (this.detectGameOver()) {
+            this.over();
+            return;
+        }
+
+        if (this.bricks.length === 0) {
             this.end();
             return;
         }
@@ -202,7 +207,7 @@ class Game {
         return false;
     }
 
-    end() {
+    over() {
         document.body.style.cursor = 'default'; 
         CANVAS.removeEventListener('mousemove', this.mouseMovedHandler);
         CONTEXT.fillStyle = 'khaki';
@@ -214,6 +219,20 @@ class Game {
         CONTEXT.strokeText('Game', CANVAS.width / 2, CANVAS.height / 2 - 80);
         CONTEXT.fillText('over!', CANVAS.width / 2, CANVAS.height / 2 + 80);
         CONTEXT.strokeText('over!', CANVAS.width / 2, CANVAS.height / 2 + 80);
+    }
+
+    end() {
+        document.body.style.cursor = 'default'; 
+        CANVAS.removeEventListener('mousemove', this.mouseMovedHandler);
+        CONTEXT.fillStyle = 'khaki';
+        CONTEXT.font = 'bold 144px serif';
+        CONTEXT.lineWidth = 5;
+        CONTEXT.strokeStyle = 'tomato';
+        CONTEXT.textAlign = 'center';
+        CONTEXT.fillText('Well', CANVAS.width / 2, CANVAS.height / 2 - 80);
+        CONTEXT.strokeText('Well', CANVAS.width / 2, CANVAS.height / 2 - 80);
+        CONTEXT.fillText('done!', CANVAS.width / 2, CANVAS.height / 2 + 80);
+        CONTEXT.strokeText('done!', CANVAS.width / 2, CANVAS.height / 2 + 80);
     }
 
     handleMouseMove(event) {
