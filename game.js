@@ -56,6 +56,10 @@ class Game {
             return;
         }
 
+        const acc = this.paddle.x - this.paddle.oldX;
+        this.paddle.acc = acc;
+        this.paddle.oldX = this.paddle.x;
+
         this.ball.clear();
         this.ball.x += this.ball.dx;
         this.ball.y += this.ball.dy;
@@ -119,6 +123,8 @@ class Game {
 
     detectCollisions() {
 
+        //console.log(`${nearestX} , ${nearestY}`)
+
         //Note: Rudimentary collision detection only, will need to be improved later.
 
         //Ball and top
@@ -173,28 +179,33 @@ class Game {
         }
 
         //Ball and paddle
-        //Ball and bottom of paddle
-        if (this.ball.x + BALL_RADIUS >= this.paddle.x && this.ball.x + BALL_RADIUS <= this.paddle.x + PADDLE_WIDTH &&
-            this.ball.y - BALL_RADIUS === this.paddle.y + PADDLE_HEIGHT) {
-            this.ball.dy *= -1;
-        }
-
-        //Ball and top of paddle
-        if (this.ball.x + BALL_RADIUS >= this.paddle.x && this.ball.x + BALL_RADIUS <= this.paddle.x + PADDLE_WIDTH &&
-            this.ball.y + BALL_RADIUS >= this.paddle.y) {
-            this.ball.dy *= -1;
-        }
-
-        //Ball and left of paddle
-        if (this.ball.x + BALL_RADIUS === this.paddle.x &&
-            this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
-            this.ball.dx *= -1;
-        }
-
-        //Ball and right of paddle
-        if (this.ball.x + BALL_RADIUS === this.paddle.x + PADDLE_WIDTH &&
-            this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
-            this.ball.dx *= -1;
+        if (this.ballIsCollidingWithPaddle()) {
+            //top
+            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + PADDLE_WIDTH && this.ball.y <= this.paddle.y) {
+                this.ball.dy *= -1;
+            //top left
+            } else if (this.ball.x <= this.paddle.x && this.ball.y <= this.paddle.y) {
+                this.ball.dx *= -1;
+                this.ball.dy *= -1;
+            //top right
+            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH && this.ball.y <= this.paddle.y) {
+                this.ball.dx *= -1;
+                this.ball.dy *= -1;
+            //middle left
+            } else if (this.ball.x <= this.paddle.x && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+                if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
+                    this.ball.dx += this.paddle.acc;
+                } else {
+                    this.ball.dx *= -1;
+                }
+            //middle right
+            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+                if (Math.sign(this.ball.dx) === 1 && Math.sign(this.paddle.acc) === 1) {
+                    this.ball.dx += this.paddle.acc;
+                } else {
+                    this.ball.dx *= -1;
+                }
+            }
         }
     }
 
@@ -247,6 +258,30 @@ class Game {
         }
         this.paddle.x = moveTo;
         this.paddle.draw();
+    }
+
+    static clamp(val, min, max) {
+        if (val >= max) {
+            val = max;
+        }
+        if (val <= min) {
+            val = min;
+        }
+        return val;
+    }
+
+    ballIsCollidingWithPaddle() {
+        const nearestX = Game.clamp(this.ball.x, this.paddle.x, this.paddle.x + PADDLE_WIDTH);
+        const nearestY = Game.clamp(this.ball.y, this.paddle.y, this.paddle.y + PADDLE_HEIGHT);
+
+        const deltaX = this.ball.x - nearestX;
+        const deltaY = this.ball.y - nearestY;
+
+        if ((deltaX * deltaX + deltaY * deltaY) < (BALL_RADIUS * BALL_RADIUS)) {
+            return true;
+        }
+
+        return false;
     }
 }
 

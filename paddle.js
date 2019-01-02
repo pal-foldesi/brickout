@@ -9,6 +9,8 @@ class Paddle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.oldX = x;
+    this.acc = 0;
     this.hue = Math.random() * 360;
     this.saturation = Math.random() * 100;
     this.luminosity = 20 + Math.random() * 60;
