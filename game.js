@@ -210,12 +210,7 @@ class Game {
     }
 
     detectGameOver() {
-        //Ball and bottom
-        if (this.ball.y >= CANVAS.height) {
-            this.end();
-            return true;
-        }
-        return false;
+        return this.ball.y >= CANVAS.height;
     }
 
     over() {
