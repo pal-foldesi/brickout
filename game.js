@@ -140,42 +140,40 @@ class Game {
         const bricksToRemove = [];
 
         //Ball and bricks
-        for (let i = 0; i < this.bricks.length; i++) {
-            const brick = this.bricks[i];
+        for (const brick of this.bricks) {
 
             //Ball and bottom of brick
             if (this.ball.x + BALL_RADIUS >= brick.x && this.ball.x + BALL_RADIUS <= brick.x + BRICK_WIDTH &&
                 this.ball.y - BALL_RADIUS === brick.y + BRICK_HEIGHT) {
-                bricksToRemove.push(i);
+                bricksToRemove.push(brick);
                 this.ball.dy *= -1;
             }
 
             //Ball and top of brick
             if (this.ball.x + BALL_RADIUS >= brick.x && this.ball.x + BALL_RADIUS <= brick.x + BRICK_WIDTH &&
                 this.ball.y + BALL_RADIUS === brick.y) {
-                bricksToRemove.push(i);
+                bricksToRemove.push(brick);
                 this.ball.dy *= -1;
             }
 
             //Ball and left of brick
             if (this.ball.x + BALL_RADIUS === brick.x &&
                 this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
-                bricksToRemove.push(i);
+                bricksToRemove.push(brick);
                 this.ball.dx *= -1;
             }
 
             //Ball and right of brick
             if (this.ball.x + BALL_RADIUS === brick.x + BRICK_WIDTH &&
                 this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
-                bricksToRemove.push(i);
+                bricksToRemove.push(brick);
                 this.ball.dx *= -1;
             }
         }
 
-        //Remove colliding bricks
-        for (let index of bricksToRemove) {
-            this.bricks[index].clear();
-            this.bricks.splice(index, 1);
+        for (const brick of bricksToRemove) {
+            brick.clear();
+            this.bricks = this.bricks.filter(elem => !elem.equals(brick));
         }
 
         //Ball and paddle
@@ -277,6 +275,10 @@ class Game {
         }
 
         return false;
+    }
+
+    removeBrick(index) {
+        this.bricks = this.bricks.splice(index, 1);
     }
 }
 

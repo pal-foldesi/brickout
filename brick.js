@@ -25,6 +25,10 @@ class Brick {
     CONTEXT.fillStyle = 'white';
     CONTEXT.fillRect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
   }
+
+  equals(otherBrick) {
+    return otherBrick instanceof Brick && this.x === otherBrick.x && this.y === otherBrick.y;
+  }
 }
 
 export default Brick;
