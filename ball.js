@@ -2,7 +2,7 @@ import {
   CANVAS,
   CONTEXT,
   BALL_RADIUS,
-} from './constants.js';
+} from './constants.js'; // eslint-disable-line import/extensions
 
 class Ball {
   constructor() {
@@ -20,14 +20,15 @@ class Ball {
   draw() {
     CONTEXT.fillStyle = this.fillStyle;
     CONTEXT.beginPath();
-    CONTEXT.ellipse(this.x, this.y, BALL_RADIUS, BALL_RADIUS, 0, 0, 2 * Math.PI);
+    CONTEXT.arc(this.x, this.y, BALL_RADIUS, 0, 2 * Math.PI);
     CONTEXT.fill();
   }
 
   clear() {
+    // We can't use clearRect() here because we would end up with artifacts when passing by bricks
     CONTEXT.fillStyle = 'white';
     CONTEXT.beginPath();
-    CONTEXT.ellipse(this.x, this.y, BALL_RADIUS + 1, BALL_RADIUS + 1, 0, 0, 2 * Math.PI); //Needed a bigger radius here to get rid of artifacts
+    CONTEXT.arc(this.x, this.y, BALL_RADIUS + 1, 0, 2 * Math.PI); //Needed a bigger radius here to get rid of artefacts
     CONTEXT.fill();
   }
 }
