@@ -1,6 +1,7 @@
+import {
+    CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH,
+} from './constants.js';
 import Ball from './ball.js';
-
-import { CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH } from './constants.js';
 import Brick from './brick.js';
 import Paddle from './paddle.js';
 
@@ -84,7 +85,8 @@ class Game {
     static hideGameStartText() {
         CONTEXT.fillStyle = 'white';
         CONTEXT.font = 'bold 144px serif';
-        CONTEXT.lineWidth = 6; //Having the same line width here as previously doesn't completely clear away the text.
+        // Having the same line width here as previously doesn't completely clear away the text.
+        CONTEXT.lineWidth = 6;
         CONTEXT.strokeStyle = 'white';
         CONTEXT.textAlign = 'center';
         CONTEXT.fillText('Click inside the', CANVAS.width / 2, CANVAS.height / 2 - 140);
@@ -122,93 +124,100 @@ class Game {
     }
 
     detectCollisions() {
+        // BALL AND WALLS
 
-        //BALL AND WALLS
-
-        //Ball and top
+        // Ball and top
         if (this.ball.y - BALL_RADIUS <= 0) {
             this.ball.dy *= -1;
         }
 
-        //Ball and sides
+        // Ball and sides
         if (this.ball.x - BALL_RADIUS <= 0 || this.ball.x + BALL_RADIUS >= CANVAS.width) {
             this.ball.dx *= -1;
         }
 
-        //BALL AND BRICKS
+        // BALL AND BRICKS
 
         const bricksToRemove = [];
 
-        for (const brick of this.bricks) {
+        this.bricks.forEach((brick) => {
             if (this.ballIsCollidingWithBrick(brick)) {
-                console.log('coll');
-                //top
-                if (this.ball.x >= brick.x && this.ball.x <= brick.x + BRICK_WIDTH && this.ball.y <= brick.y) {
+                // top
+                if (this.ball.x >= brick.x && this.ball.x <= brick.x + BRICK_WIDTH
+                    && this.ball.y <= brick.y) {
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
-                    //top left
+                    // top left
                 } else if (this.ball.x <= brick.x && this.ball.y <= brick.y) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
-                    //top right
+                    // top right
                 } else if (this.ball.x >= brick.x + BRICK_WIDTH && this.ball.y <= brick.y) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
-                    //middle left
-                } else if (this.ball.x <= brick.x && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                    // middle left
+                } else if (this.ball.x <= brick.x
+                    && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
                     this.ball.dx *= -1;
                     bricksToRemove.push(brick);
-                    //middle right
-                } else if (this.ball.x >= brick.x + BRICK_WIDTH && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                    // middle right
+                } else if (this.ball.x >= brick.x + BRICK_WIDTH
+                    && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
                     this.ball.dx *= -1;
                     bricksToRemove.push(brick);
-                    //bottom left
+                    // bottom left
                 } else if (this.ball.x < brick.x && this.ball.y > brick.y + BRICK_HEIGHT) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
-                    //bottom
-                } else if (this.ball.x > brick.x && this.ball.x < brick.x + BRICK_WIDTH && this.ball.y > brick.y + BRICK_HEIGHT) {
+                    // bottom
+                } else if (this.ball.x > brick.x && this.ball.x < brick.x + BRICK_WIDTH
+                    && this.ball.y > brick.y + BRICK_HEIGHT) {
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
-                    //bottom right
-                } else if (this.ball.x > brick.x + BRICK_WIDTH && this.ball.y > brick.y + BRICK_HEIGHT) {
+                    // bottom right
+                } else if (this.ball.x > brick.x + BRICK_WIDTH
+                    && this.ball.y > brick.y + BRICK_HEIGHT) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
                 }
             }
-        }
+        });
 
-        for (const brick of bricksToRemove) {
+        bricksToRemove.forEach((brick) => {
             brick.clear();
             this.bricks = this.bricks.filter(elem => !elem.equals(brick));
-        }
+        });
 
-        //BALL AND PADDLE
+        // BALL AND PADDLE
         if (this.ballIsCollidingWithPaddle()) {
-            //top
-            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + PADDLE_WIDTH && this.ball.y <= this.paddle.y) {
+            // top
+            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + PADDLE_WIDTH
+                && this.ball.y <= this.paddle.y) {
                 this.ball.dy *= -1;
-                //top left
+                // top left
             } else if (this.ball.x <= this.paddle.x && this.ball.y <= this.paddle.y) {
                 this.ball.dx *= -1;
                 this.ball.dy *= -1;
-                //top right
-            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH && this.ball.y <= this.paddle.y) {
+                // top right
+            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH
+                && this.ball.y <= this.paddle.y) {
                 this.ball.dx *= -1;
                 this.ball.dy *= -1;
-                //middle left
-            } else if (this.ball.x <= this.paddle.x && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+                // middle left
+            } else if (this.ball.x <= this.paddle.x
+                && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
                 if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
                     this.ball.dx *= -1;
                 }
-                //middle right
-            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+                // middle right
+            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH
+                && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
                 if (Math.sign(this.ball.dx) === 1 && Math.sign(this.paddle.acc) === 1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
@@ -251,7 +260,6 @@ class Game {
     }
 
     handleMouseMove(event) {
-        //console.log(`clientX: ${event.clientX}, screenX: ${event.screenX}, windowX: ${window.screenX}`);
         this.paddle.clear();
         const offset = window.screen.availWidth - CANVAS.width;
         let moveTo = event.clientX - offset;
@@ -265,13 +273,13 @@ class Game {
     }
 
     static clamp(val, min, max) {
+        let clampedVal = val;
         if (val >= max) {
-            val = max;
+            clampedVal = max;
+        } else if (val <= min) {
+            clampedVal = min;
         }
-        if (val <= min) {
-            val = min;
-        }
-        return val;
+        return clampedVal;
     }
 
     ballIsCollidingWithPaddle() {

@@ -3,5 +3,13 @@
         "ecmaVersion": 6,
         "sourceType": "module"
     },
-    "extends": "airbnb-base"
+    "extends": "airbnb-base",
+    "rules": {
+        "import/extensions": "never",
+        "indent": ["error", 4]
+    },
+    "globals": {
+        "window": false,
+        "document": false
+    }
 }
