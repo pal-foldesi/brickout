@@ -3,10 +3,10 @@ class Shape {
         this.x = x;
         this.y = y;
 
-        this.hue = Math.random() * 360;
-        this.saturation = Math.random() * 100;
-        this.luminosity = 20 + Math.random() * 60;
-        this.fillStyle = `hsla(${this.hue},${this.saturation}%,${this.luminosity}%,1.0)`;
+        this.red = Math.round(Math.random() * 255);
+        this.green = Math.round(Math.random() * 255);
+        this.blue = Math.round(Math.random() * 255);
+        this.fillStyle = `rgb(${this.red},${this.green},${this.blue})`;
 
         this.draw();
     }
