@@ -12,7 +12,7 @@ class Game {
         this.bricks = [];
         this.generateBricks();
         Game.showGameStartText();
-        this.ball = new Ball();
+        this.ball = new Ball(CANVAS.width / 2, (CANVAS.height / 5) * 4);
         const self = this;
         this.mouseMoved = ((event) => {
             this.handleMouseMove(event);

@@ -4,18 +4,13 @@ import {
     BRICK_HEIGHT,
     PADDLE_HEIGHT,
 } from './constants.js';
+import Shape from './shape.js';
 
-class Paddle {
+class Paddle extends Shape {
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.oldX = x;
         this.acc = 0;
-        this.hue = Math.random() * 360;
-        this.saturation = Math.random() * 100;
-        this.luminosity = 20 + Math.random() * 60;
-        this.fillStyle = `hsla(${this.hue},${this.saturation}%,${this.luminosity}%,1.0)`;
-        this.draw();
     }
 
     draw() {
