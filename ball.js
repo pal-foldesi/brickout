@@ -1,12 +1,12 @@
 import {
     CONTEXT,
-    BALL_RADIUS,
 } from './constants.js';
 import Shape from './shape.js';
 
 class Ball extends Shape {
-    constructor(x, y) {
+    constructor(x, y, radius) {
         super(x, y);
+        this.radius = radius;
         this.dx = 0;
         this.dy = 0;
         this.draw();
@@ -15,7 +15,7 @@ class Ball extends Shape {
     draw() {
         CONTEXT.fillStyle = this.fillStyle;
         CONTEXT.beginPath();
-        CONTEXT.arc(this.x, this.y, BALL_RADIUS, 0, 2 * Math.PI);
+        CONTEXT.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         CONTEXT.fill();
     }
 
@@ -25,7 +25,7 @@ class Ball extends Shape {
         CONTEXT.fillStyle = 'white';
         CONTEXT.beginPath();
         // Needed a bigger radius here to get rid of artefacts
-        CONTEXT.arc(this.x, this.y, BALL_RADIUS + 1, 0, 2 * Math.PI);
+        CONTEXT.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
         CONTEXT.fill();
     }
 }

@@ -1,7 +1,5 @@
 import {
     CONTEXT,
-    PADDLE_WIDTH,
-    PADDLE_HEIGHT,
 } from './constants.js';
 import Shape from './shape.js';
 
@@ -17,13 +15,13 @@ class Paddle extends Shape {
 
     draw() {
         CONTEXT.fillStyle = this.fillStyle;
-        CONTEXT.fillRect(this.x, this.y, PADDLE_WIDTH, PADDLE_HEIGHT);
+        CONTEXT.fillRect(this.x, this.y, this.width, this.height);
     }
 
     clear() {
         CONTEXT.fillStyle = 'white';
         // Width and length are offset to get rid of artifacts
-        CONTEXT.fillRect(this.x - 1, this.y - 1, PADDLE_WIDTH + 1, PADDLE_HEIGHT + 1);
+        CONTEXT.fillRect(this.x - 1, this.y - 1, this.width + 1, this.height + 1);
     }
 }
 

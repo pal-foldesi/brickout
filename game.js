@@ -1,15 +1,6 @@
 import {
     CANVAS,
     CONTEXT,
-    BRICK_HEIGHT,
-    BRICK_WIDTH,
-    BALL_RADIUS,
-    BRICK_HORIZONTAL_PADDING,
-    BRICK_VERTICAL_PADDING,
-    BRICK_OFFSET_LEFT,
-    BRICK_OFFSET_TOP,
-    PADDLE_HEIGHT,
-    PADDLE_WIDTH,
 } from './constants.js';
 import Ball from './ball.js';
 import Brick from './brick.js';
@@ -19,10 +10,11 @@ class Game {
     constructor() {
         Game.setCanvasWidth();
         Game.setCanvasHeight();
+        this.setUiElementSizes();
         this.bricks = [];
         this.generateBricks();
         Game.showGameStartText();
-        this.ball = new Ball(CANVAS.width / 2, (CANVAS.height / 5) * 4);
+        this.ball = new Ball(CANVAS.width / 2, (CANVAS.height / 5) * 4, this.ballRadius);
         const self = this;
         this.mouseMoved = ((event) => {
             this.handleMouseMove(event);
@@ -33,27 +25,13 @@ class Game {
     }
 
     static setCanvasWidth() {
-        const desiredWidth = 8 * BRICK_WIDTH;
-
-        if (desiredWidth <= window.screen.availWidth) {
-            CANVAS.width = desiredWidth;
-        }
+        // Chromium needs some extra room...
+        CANVAS.width = window.innerWidth - 40;
     }
 
     static setCanvasHeight() {
-        let desiredHeight = window.screen.availHeight;
-
-        if (desiredHeight % 100 !== 0) {
-            desiredHeight -= desiredHeight % 100;
-        }
-
-        desiredHeight -= 100; // To leave room for browser/OS UI toolbars
-
-        if (desiredHeight > 20 * BRICK_HEIGHT) {
-            desiredHeight = 20 * BRICK_HEIGHT;
-        }
-
-        CANVAS.height = desiredHeight;
+        // Chromium needs some extra room...
+        CANVAS.height = window.innerHeight - 20;
     }
 
     tick() {
@@ -87,8 +65,8 @@ class Game {
         this.bricks.forEach(brick => brick.draw());
         const self = this;
         CANVAS.addEventListener('mousemove', this.mouseMovedHandler);
-        this.ball.dx = -5;
-        this.ball.dy = -5;
+        this.ball.dx = -Math.round((CANVAS.width / 320));
+        this.ball.dy = -Math.round((CANVAS.width / 320));
         window.requestAnimationFrame(() => self.tick());
     }
 
@@ -122,30 +100,35 @@ class Game {
     }
 
     generateBricks() {
-        for (let i = 0; i < 7; i++) {
-            for (let j = 0; j < 5; j++) {
-                const brickX = i * (BRICK_WIDTH + BRICK_HORIZONTAL_PADDING) + BRICK_OFFSET_LEFT;
-                const brickY = j * (BRICK_HEIGHT + BRICK_VERTICAL_PADDING) + BRICK_OFFSET_TOP;
-                this.bricks.push(new Brick(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT));
+        const numberOfColumns = Math.round(CANVAS.width / this.brickWidth) - 1;
+        const numberOfRows = Math.round(Math.round(CANVAS.height / this.brickHeight) * 2 / 3) - 1;
+        for (let i = 0; i < numberOfColumns; i += 1) {
+            for (let j = 0; j < numberOfRows; j += 1) {
+                const brickX = i * (this.brickWidth + this.brickHorizontalPadding)
+                + this.brickOffsetLeft;
+                const brickY = j * (this.brickHeight + this.brickVerticalPadding)
+                + this.brickOffsetTop;
+                this.bricks.push(new Brick(brickX, brickY, this.brickWidth, this.brickHeight));
             }
         }
     }
 
     generatePaddle() {
-        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH / 2, CANVAS.height - PADDLE_HEIGHT,
-            PADDLE_WIDTH, PADDLE_HEIGHT);
+        this.paddle = new Paddle(CANVAS.width / 2 - this.paddleWidth / 2,
+            CANVAS.height - this.paddleHeight,
+            this.paddleWidth, this.paddleHeight);
     }
 
     detectCollisions() {
         // BALL AND WALLS
 
         // Ball and top
-        if (this.ball.y - BALL_RADIUS <= 0) {
+        if (this.ball.y - this.ball.radius <= 0) {
             this.ball.dy *= -1;
         }
 
         // Ball and sides
-        if (this.ball.x - BALL_RADIUS <= 0 || this.ball.x + BALL_RADIUS >= CANVAS.width) {
+        if (this.ball.x - this.ball.radius <= 0 || this.ball.x + this.ball.radius >= CANVAS.width) {
             this.ball.dx *= -1;
         }
 
@@ -156,7 +139,7 @@ class Game {
         this.bricks.forEach((brick) => {
             if (this.ballIsCollidingWithBrick(brick)) {
                 // top
-                if (this.ball.x >= brick.x && this.ball.x <= brick.x + BRICK_WIDTH
+                if (this.ball.x >= brick.x && this.ball.x <= brick.x + brick.width
                     && this.ball.y <= brick.y) {
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
@@ -166,33 +149,33 @@ class Game {
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
                     // top right
-                } else if (this.ball.x >= brick.x + BRICK_WIDTH && this.ball.y <= brick.y) {
+                } else if (this.ball.x >= brick.x + brick.width && this.ball.y <= brick.y) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
                     // middle left
                 } else if (this.ball.x <= brick.x
-                    && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                    && this.ball.y >= brick.y && this.ball.y <= brick.y + brick.height) {
                     this.ball.dx *= -1;
                     bricksToRemove.push(brick);
                     // middle right
-                } else if (this.ball.x >= brick.x + BRICK_WIDTH
-                    && this.ball.y >= brick.y && this.ball.y <= brick.y + BRICK_HEIGHT) {
+                } else if (this.ball.x >= brick.x + brick.width
+                    && this.ball.y >= brick.y && this.ball.y <= brick.y + brick.height) {
                     this.ball.dx *= -1;
                     bricksToRemove.push(brick);
                     // bottom left
-                } else if (this.ball.x < brick.x && this.ball.y > brick.y + BRICK_HEIGHT) {
+                } else if (this.ball.x < brick.x && this.ball.y > brick.y + brick.height) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
                     // bottom
-                } else if (this.ball.x > brick.x && this.ball.x < brick.x + BRICK_WIDTH
-                    && this.ball.y > brick.y + BRICK_HEIGHT) {
+                } else if (this.ball.x > brick.x && this.ball.x < brick.x + brick.width
+                    && this.ball.y > brick.y + brick.height) {
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
                     // bottom right
-                } else if (this.ball.x > brick.x + BRICK_WIDTH
-                    && this.ball.y > brick.y + BRICK_HEIGHT) {
+                } else if (this.ball.x > brick.x + brick.width
+                    && this.ball.y > brick.y + brick.height) {
                     this.ball.dx *= -1;
                     this.ball.dy *= -1;
                     bricksToRemove.push(brick);
@@ -208,7 +191,7 @@ class Game {
         // BALL AND PADDLE
         if (this.ballIsCollidingWithPaddle()) {
             // top
-            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + PADDLE_WIDTH
+            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + this.paddle.width
                 && this.ball.y <= this.paddle.y) {
                 this.ball.dy *= -1;
                 // top left
@@ -216,21 +199,23 @@ class Game {
                 this.ball.dx *= -1;
                 this.ball.dy *= -1;
                 // top right
-            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH
+            } else if (this.ball.x >= this.paddle.x + this.paddle.width
                 && this.ball.y <= this.paddle.y) {
                 this.ball.dx *= -1;
                 this.ball.dy *= -1;
                 // middle left
             } else if (this.ball.x <= this.paddle.x
-                && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+                && this.ball.y >= this.paddle.y && this.ball.y
+                <= this.paddle.y + this.paddle.height) {
                 if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
                     this.ball.dx *= -1;
                 }
                 // middle right
-            } else if (this.ball.x >= this.paddle.x + PADDLE_WIDTH
-                && this.ball.y >= this.paddle.y && this.ball.y <= this.paddle.y + PADDLE_HEIGHT) {
+            } else if (this.ball.x >= this.paddle.x + this.paddle.width
+                && this.ball.y >= this.paddle.y && this.ball.y
+                <= this.paddle.y + this.paddle.height) {
                 if (Math.sign(this.ball.dx) === 1 && Math.sign(this.paddle.acc) === 1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
@@ -278,8 +263,8 @@ class Game {
         let moveTo = event.clientX - offset;
         if (moveTo < 0) {
             moveTo = 0;
-        } else if (moveTo > CANVAS.width - PADDLE_WIDTH) {
-            moveTo = CANVAS.width - PADDLE_WIDTH;
+        } else if (moveTo > CANVAS.width - this.paddle.width) {
+            moveTo = CANVAS.width - this.paddle.width;
         }
         this.paddle.x = moveTo;
         this.paddle.draw();
@@ -295,14 +280,27 @@ class Game {
         return clampedVal;
     }
 
+    setUiElementSizes() {
+        this.ballRadius = CANVAS.width / 80;
+        this.brickWidth = CANVAS.width / 8;
+        // Needed to round here to get rid of artefacts when clearing
+        this.brickHeight = Math.round(CANVAS.width / 16);
+        this.brickHorizontalPadding = Math.round(CANVAS.width / 200 * 3);
+        this.brickOffsetLeft = Math.round(CANVAS.width / 160 * 3);
+        this.brickVerticalPadding = Math.round(CANVAS.height / 50);
+        this.brickOffsetTop = Math.round(CANVAS.height / 100 * 3);
+        this.paddleWidth = Math.round(CANVAS.width / 7);
+        this.paddleHeight = Math.round(CANVAS.height / 24);
+    }
+
     ballIsCollidingWithPaddle() {
-        const nearestX = Game.clamp(this.ball.x, this.paddle.x, this.paddle.x + PADDLE_WIDTH);
-        const nearestY = Game.clamp(this.ball.y, this.paddle.y, this.paddle.y + PADDLE_HEIGHT);
+        const nearestX = Game.clamp(this.ball.x, this.paddle.x, this.paddle.x + this.paddle.width);
+        const nearestY = Game.clamp(this.ball.y, this.paddle.y, this.paddle.y + this.paddle.height);
 
         const deltaX = this.ball.x - nearestX;
         const deltaY = this.ball.y - nearestY;
 
-        if ((deltaX * deltaX + deltaY * deltaY) < (BALL_RADIUS * BALL_RADIUS)) {
+        if ((deltaX * deltaX + deltaY * deltaY) < (this.ball.radius * this.ball.radius)) {
             return true;
         }
 
@@ -310,13 +308,13 @@ class Game {
     }
 
     ballIsCollidingWithBrick(brick) {
-        const nearestX = Game.clamp(this.ball.x, brick.x, brick.x + BRICK_WIDTH);
-        const nearestY = Game.clamp(this.ball.y, brick.y, brick.y + BRICK_HEIGHT);
+        const nearestX = Game.clamp(this.ball.x, brick.x, brick.x + brick.width);
+        const nearestY = Game.clamp(this.ball.y, brick.y, brick.y + brick.height);
 
         const deltaX = this.ball.x - nearestX;
         const deltaY = this.ball.y - nearestY;
 
-        if ((deltaX * deltaX + deltaY * deltaY) < (BALL_RADIUS * BALL_RADIUS)) {
+        if ((deltaX * deltaX + deltaY * deltaY) < (this.ball.radius * this.ball.radius)) {
             return true;
         }
 
