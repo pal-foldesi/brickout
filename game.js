@@ -1,5 +1,15 @@
 import {
-    CANVAS, CONTEXT, BRICK_HEIGHT, BRICK_WIDTH, BALL_RADIUS, PADDLE_HEIGHT, PADDLE_WIDTH,
+    CANVAS,
+    CONTEXT,
+    BRICK_HEIGHT,
+    BRICK_WIDTH,
+    BALL_RADIUS,
+    BRICK_HORIZONTAL_PADDING,
+    BRICK_VERTICAL_PADDING,
+    BRICK_OFFSET_LEFT,
+    BRICK_OFFSET_TOP,
+    PADDLE_HEIGHT,
+    PADDLE_WIDTH,
 } from './constants.js';
 import Ball from './ball.js';
 import Brick from './brick.js';
@@ -112,15 +122,18 @@ class Game {
     }
 
     generateBricks() {
-        for (let i = 0; i < CANVAS.width; i += BRICK_WIDTH) {
-            for (let j = 0; j < CANVAS.height / 2; j += BRICK_HEIGHT) {
-                this.bricks.push(new Brick(i, j, BRICK_WIDTH, BRICK_HEIGHT));
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 5; j++) {
+                const brickX = i * (BRICK_WIDTH + BRICK_HORIZONTAL_PADDING) + BRICK_OFFSET_LEFT;
+                const brickY = j * (BRICK_HEIGHT + BRICK_VERTICAL_PADDING) + BRICK_OFFSET_TOP;
+                this.bricks.push(new Brick(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT));
             }
         }
     }
 
     generatePaddle() {
-        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH / 2, CANVAS.height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
+        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH / 2, CANVAS.height - PADDLE_HEIGHT,
+            PADDLE_WIDTH, PADDLE_HEIGHT);
     }
 
     detectCollisions() {
