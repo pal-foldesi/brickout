@@ -35,7 +35,7 @@ class Game {
     static setCanvasWidth() {
         const desiredWidth = 8 * BRICK_WIDTH;
 
-        if (desiredWidth < window.screen.availWidth) {
+        if (desiredWidth <= window.screen.availWidth) {
             CANVAS.width = desiredWidth;
         }
     }
