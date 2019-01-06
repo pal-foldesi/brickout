@@ -114,13 +114,13 @@ class Game {
     generateBricks() {
         for (let i = 0; i < CANVAS.width; i += BRICK_WIDTH) {
             for (let j = 0; j < CANVAS.height / 2; j += BRICK_HEIGHT) {
-                this.bricks.push(new Brick(i, j));
+                this.bricks.push(new Brick(i, j, BRICK_WIDTH, BRICK_HEIGHT));
             }
         }
     }
 
     generatePaddle() {
-        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH / 2, CANVAS.height - PADDLE_HEIGHT);
+        this.paddle = new Paddle(CANVAS.width / 2 - BRICK_WIDTH / 2, CANVAS.height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
     }
 
     detectCollisions() {

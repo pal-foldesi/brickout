@@ -9,6 +9,7 @@ class Ball extends Shape {
         super(x, y);
         this.dx = 0;
         this.dy = 0;
+        this.draw();
     }
 
     draw() {

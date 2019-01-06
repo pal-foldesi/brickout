@@ -6,10 +6,13 @@ import {
 import Shape from './shape.js';
 
 class Paddle extends Shape {
-    constructor(x, y) {
+    constructor(x, y, width, height) {
         super(x, y);
+        this.width = width;
+        this.height = height;
         this.oldX = x;
         this.acc = 0;
+        this.draw();
     }
 
     draw() {
