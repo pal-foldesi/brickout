@@ -183,10 +183,7 @@ class Game {
             }
         });
 
-        bricksToRemove.forEach((brick) => {
-            brick.clear();
-            this.bricks = this.bricks.filter(elem => !elem.equals(brick));
-        });
+        bricksToRemove.forEach(brick => this.removeBrick(brick));
 
         // BALL AND PADDLE
         if (this.ballIsCollidingWithPaddle()) {
@@ -315,8 +312,9 @@ class Game {
         return false;
     }
 
-    removeBrick(index) {
-        this.bricks = this.bricks.splice(index, 1);
+    removeBrick(brick) {
+        brick.clear();
+        this.bricks = this.bricks.filter(elem => !elem.equals(brick));
     }
 }
 
