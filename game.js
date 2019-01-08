@@ -259,14 +259,8 @@ class Game {
 
     handleMouseMove(event) {
         this.paddle.clear();
-        const offset = window.screen.availWidth - CANVAS.width;
-        let moveTo = event.clientX - offset;
-        if (moveTo < 0) {
-            moveTo = 0;
-        } else if (moveTo > CANVAS.width - this.paddle.width) {
-            moveTo = CANVAS.width - this.paddle.width;
-        }
-        this.paddle.x = moveTo;
+        const offset = window.innerWidth - CANVAS.width;
+        this.paddle.x = Game.clamp(event.clientX - offset, 0, CANVAS.width - this.paddle.width);
         this.paddle.draw();
     }
 
