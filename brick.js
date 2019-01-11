@@ -1,19 +1,12 @@
 import {
     CONTEXT,
 } from './constants.js';
-import Shape from './shape.js';
+import Rectangle from './rectangle.js';
 
-class Brick extends Shape {
+class Brick extends Rectangle {
     constructor(x, y, width, height) {
-        super(x, y);
-        this.width = width;
-        this.height = height;
+        super(x, y, width, height);
         this.draw();
-    }
-
-    draw() {
-        CONTEXT.fillStyle = this.fillStyle;
-        CONTEXT.fillRect(this.x, this.y, this.width, this.height);
     }
 
     clear() {

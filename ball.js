@@ -28,6 +28,19 @@ class Ball extends Shape {
         CONTEXT.arc(this.x, this.y, this.radius + 1, 0, 2 * Math.PI);
         CONTEXT.fill();
     }
+
+    reverseX() {
+        this.dx = -this.dx;
+    }
+
+    reverseY() {
+        this.dy = -this.dy;
+    }
+
+    reverse() {
+        this.reverseX();
+        this.reverseY();
+    }
 }
 
 export default Ball;

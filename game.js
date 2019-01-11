@@ -124,99 +124,63 @@ class Game {
 
         // Ball and top
         if (this.ball.y - this.ball.radius <= 0) {
-            this.ball.dy *= -1;
+            this.ball.reverseY();
         }
 
         // Ball and sides
         if (this.ball.x - this.ball.radius <= 0 || this.ball.x + this.ball.radius >= CANVAS.width) {
-            this.ball.dx *= -1;
+            this.ball.reverseX();
         }
 
         // BALL AND BRICKS
-
         const bricksToRemove = [];
 
         this.bricks.forEach((brick) => {
-            if (this.ballIsCollidingWithBrick(brick)) {
-                // top
-                if (this.ball.x >= brick.x && this.ball.x <= brick.x + brick.width
-                    && this.ball.y <= brick.y) {
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
-                    // top left
-                } else if (this.ball.x <= brick.x && this.ball.y <= brick.y) {
-                    this.ball.dx *= -1;
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
-                    // top right
-                } else if (this.ball.x >= brick.x + brick.width && this.ball.y <= brick.y) {
-                    this.ball.dx *= -1;
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
-                    // middle left
-                } else if (this.ball.x <= brick.x
-                    && this.ball.y >= brick.y && this.ball.y <= brick.y + brick.height) {
-                    this.ball.dx *= -1;
-                    bricksToRemove.push(brick);
-                    // middle right
-                } else if (this.ball.x >= brick.x + brick.width
-                    && this.ball.y >= brick.y && this.ball.y <= brick.y + brick.height) {
-                    this.ball.dx *= -1;
-                    bricksToRemove.push(brick);
-                    // bottom left
-                } else if (this.ball.x < brick.x && this.ball.y > brick.y + brick.height) {
-                    this.ball.dx *= -1;
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
-                    // bottom
-                } else if (this.ball.x > brick.x && this.ball.x < brick.x + brick.width
-                    && this.ball.y > brick.y + brick.height) {
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
-                    // bottom right
-                } else if (this.ball.x > brick.x + brick.width
-                    && this.ball.y > brick.y + brick.height) {
-                    this.ball.dx *= -1;
-                    this.ball.dy *= -1;
-                    bricksToRemove.push(brick);
+            if (brick.intersectsWith(this.ball)) {
+                if (brick.intersectsAtTop(this.ball)) {
+                    this.ball.reverseY();
+                } else if (brick.intersectsAtTopLeft(this.ball)) {
+                    this.ball.reverse();
+                } else if (brick.intersectsAtTopRight(this.ball)) {
+                    this.ball.reverse();
+                } else if (brick.intersectsAtMiddleLeft(this.ball)) {
+                    this.ball.reverseX();
+                } else if (brick.intersectsAtMiddleRight(this.ball)) {
+                    this.ball.reverseX();
+                } else if (brick.intersectsAtBottomLeft(this.ball)) {
+                    this.ball.reverse();
+                } else if (brick.intersectsAtBottom(this.ball)) {
+                    this.ball.reverseY();
+                } else if (brick.intersectsAtBottomRight(this.ball)) {
+                    this.ball.reverse();
                 }
+                bricksToRemove.push(brick);
             }
         });
 
         bricksToRemove.forEach(brick => this.removeBrick(brick));
 
         // BALL AND PADDLE
-        if (this.ballIsCollidingWithPaddle()) {
-            // top
-            if (this.ball.x >= this.paddle.x && this.ball.x <= this.paddle.x + this.paddle.width
-                && this.ball.y <= this.paddle.y) {
-                this.ball.dy *= -1;
-                // top left
-            } else if (this.ball.x <= this.paddle.x && this.ball.y <= this.paddle.y) {
-                this.ball.dx *= -1;
-                this.ball.dy *= -1;
-                // top right
-            } else if (this.ball.x >= this.paddle.x + this.paddle.width
-                && this.ball.y <= this.paddle.y) {
-                this.ball.dx *= -1;
-                this.ball.dy *= -1;
-                // middle left
-            } else if (this.ball.x <= this.paddle.x
-                && this.ball.y >= this.paddle.y && this.ball.y
-                <= this.paddle.y + this.paddle.height) {
+        if (this.paddle.intersectsWith(this.ball)) {
+            if (this.paddle.intersectsAtTop(this.ball)) {
+                this.ball.reverseY();
+            } else if (this.paddle.intersectsAtTopLeft(this.ball)) {
+                this.ball.reverse();
+            } else if (this.paddle.intersectsAtTopRight(this.ball)) {
+                this.ball.reverse();
+            } else if (this.paddle.intersectsAtMiddleLeft(this.ball)) {
+                this.ball.reverseX();
                 if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
-                    this.ball.dx *= -1;
+                    this.ball.reverseX();
                 }
-                // middle right
-            } else if (this.ball.x >= this.paddle.x + this.paddle.width
-                && this.ball.y >= this.paddle.y && this.ball.y
-                <= this.paddle.y + this.paddle.height) {
+            } else if (this.paddle.intersectsAtMiddleRight(this.ball)) {
+                this.ball.reverseX();
                 if (Math.sign(this.ball.dx) === 1 && Math.sign(this.paddle.acc) === 1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
-                    this.ball.dx *= -1;
+                    this.ball.reverseX();
                 }
             }
         }
@@ -282,34 +246,6 @@ class Game {
         this.brickOffsetTop = Math.round(CANVAS.height / 100 * 3);
         this.paddleWidth = Math.round(CANVAS.width / 7);
         this.paddleHeight = Math.round(CANVAS.height / 24);
-    }
-
-    ballIsCollidingWithPaddle() {
-        const nearestX = Game.clamp(this.ball.x, this.paddle.x, this.paddle.x + this.paddle.width);
-        const nearestY = Game.clamp(this.ball.y, this.paddle.y, this.paddle.y + this.paddle.height);
-
-        const deltaX = this.ball.x - nearestX;
-        const deltaY = this.ball.y - nearestY;
-
-        if ((deltaX * deltaX + deltaY * deltaY) < (this.ball.radius * this.ball.radius)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    ballIsCollidingWithBrick(brick) {
-        const nearestX = Game.clamp(this.ball.x, brick.x, brick.x + brick.width);
-        const nearestY = Game.clamp(this.ball.y, brick.y, brick.y + brick.height);
-
-        const deltaX = this.ball.x - nearestX;
-        const deltaY = this.ball.y - nearestY;
-
-        if ((deltaX * deltaX + deltaY * deltaY) < (this.ball.radius * this.ball.radius)) {
-            return true;
-        }
-
-        return false;
     }
 
     removeBrick(brick) {

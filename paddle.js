@@ -1,21 +1,14 @@
 import {
     CONTEXT,
 } from './constants.js';
-import Shape from './shape.js';
+import Rectangle from './rectangle.js';
 
-class Paddle extends Shape {
+class Paddle extends Rectangle {
     constructor(x, y, width, height) {
-        super(x, y);
-        this.width = width;
-        this.height = height;
+        super(x, y, width, height);
         this.oldX = x;
         this.acc = 0;
         this.draw();
-    }
-
-    draw() {
-        CONTEXT.fillStyle = this.fillStyle;
-        CONTEXT.fillRect(this.x, this.y, this.width, this.height);
     }
 
     clear() {
