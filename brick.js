@@ -11,7 +11,9 @@ class Brick extends Rectangle {
 
     clear() {
         CONTEXT.fillStyle = 'white';
-        CONTEXT.fillRect(this.x, this.y, this.width, this.height);
+
+        // Added some offset to get rid of artefacts
+        CONTEXT.fillRect(this.x - 1, this.y - 1, this.width + 2, this.height + 2);
     }
 
     equals(otherBrick) {
