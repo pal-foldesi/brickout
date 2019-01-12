@@ -165,9 +165,17 @@ class Game {
             if (this.paddle.intersectsAtTop(this.ball)) {
                 this.ball.reverseY();
             } else if (this.paddle.intersectsAtTopLeft(this.ball)) {
-                this.ball.reverse();
+                if (this.ball.dx > 0) {
+                    this.ball.reverse();
+                } else {
+                    this.ball.reverseY();
+                }
             } else if (this.paddle.intersectsAtTopRight(this.ball)) {
-                this.ball.reverse();
+                if (this.ball.dx < 0) {
+                    this.ball.reverse();
+                } else {
+                    this.ball.reverseY();
+                }
             } else if (this.paddle.intersectsAtMiddleLeft(this.ball)) {
                 this.ball.reverseX();
                 if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
