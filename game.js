@@ -177,14 +177,12 @@ class Game {
                     this.ball.reverseY();
                 }
             } else if (this.paddle.intersectsAtMiddleLeft(this.ball)) {
-                this.ball.reverseX();
                 if (Math.sign(this.ball.dx) === -1 && Math.sign(this.paddle.acc) === -1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
                     this.ball.reverseX();
                 }
             } else if (this.paddle.intersectsAtMiddleRight(this.ball)) {
-                this.ball.reverseX();
                 if (Math.sign(this.ball.dx) === 1 && Math.sign(this.paddle.acc) === 1) {
                     this.ball.dx += this.paddle.acc;
                 } else {
