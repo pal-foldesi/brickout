@@ -21,9 +21,9 @@
   },
   "homepage": "https://github.com/pal-foldesi/brickout#readme",
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^6.2.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "lodash": "^4.17.15"
   }
 }
